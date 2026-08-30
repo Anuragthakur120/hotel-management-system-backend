@@ -22,7 +22,7 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/crown_hotel_pms';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://Anuragthakur130:ram123@cluster0.lakvfrw.mongodb.net/hotel_crown_pms?appName=Cluster0';
 
 // Middleware
 app.use(cors());
@@ -194,7 +194,7 @@ async function seedMongoDB() {
 // Database Connection
 mongoose.connect(MONGO_URI)
   .then(async () => {
-    console.log('🍃 Connected to MongoDB (Crown HMS Database)');
+    console.log(' MongoDB connected 🍃 (Crown HMS Database)');
     await seedMongoDB();
   })
   .catch(err => {
