@@ -1,0 +1,73 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions for Role-Based Access Control (RBAC)
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.role == 'admin';
+    }
+    
+    function isManagerOrAdmin() {
+      return isAuthenticated() && (request.auth.token.role == 'admin' || request.auth.token.role == 'manager');
+    }
+
+    function isStaff() {
+      return isAuthenticated() && (
+        request.auth.token.role == 'admin' || 
+        request.auth.token.role == 'manager' || 
+        request.auth.token.role == 'receptionist'
+      );
+    }
+
+    // 1. ROOM MASTER COLLECTION
+    // Staff can read room status, ONLY Admin/Manager can write room prices/details
+    match /rooms/{roomId} {
+      allow read: if isStaff();
+      allow write: if isManagerOrAdmin();
+    }
+
+    // 2. GUEST MASTER PROFILE REPOSITORY
+    // Full Aadhaar & full documents only readable by Manager/Admin
+    match /guests/{guestId} {
+      allow read: if isStaff();
+      allow create, update: if isStaff();
+      allow delete: if isAdmin();
+
+      // Restricted Subcollection for Full Sensitive ID Numbers (DPDP Act Compliance)
+      match /sensitive_id/{docId} {
+        allow read, write: if isManagerOrAdmin();
+      }
+    }
+
+    // 3. STAYS / ACTIVE FOLIOS
+    // Staff can create & update check-in stays & add services
+    match /stays/{stayId} {
+      allow read: if isStaff();
+      allow create, update: if isStaff();
+      allow delete: if isAdmin();
+    }
+
+    // 4. RESERVATIONS
+    match /reservations/{reservationId} {
+      allow read: if isStaff();
+      allow write: if isStaff();
+    }
+
+    // 5. HOTEL CONFIG & SYSTEM SECRETS
+    // Only Admin can modify hotel config, tax rates & financial setup
+    match /config/{configDoc} {
+      allow read: if isStaff();
+      allow write: if isAdmin();
+    }
+
+    // 6. PRECOMPUTED DAILY STATS (CLOUD FUNCTION SUMMARY)
+    match /dailyStats/{dateDoc} {
+      allow read: if isManagerOrAdmin();
+      allow write: if false; // Only Cloud Functions server can compute stats
+    }
+  }
+}

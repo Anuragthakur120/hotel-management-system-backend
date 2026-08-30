@@ -1,0 +1,29 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isManagerOrAdmin() {
+      return isAuthenticated() && (request.auth.token.role == 'admin' || request.auth.token.role == 'manager');
+    }
+
+    function isStaff() {
+      return isAuthenticated() && (
+        request.auth.token.role == 'admin' || 
+        request.auth.token.role == 'manager' || 
+        request.auth.token.role == 'receptionist'
+      );
+    }
+
+    // Guest ID Documents path: guestDocuments/{guestId}/{filename}
+    match /guestDocuments/{guestId}/{allPaths=**} {
+      // Staff can upload guest ID documents
+      allow create, update: if isStaff() && request.resource.size < 5 * 1024 * 1024; // 5MB max
+      // Only Manager or Admin can view or delete raw original ID document scans
+      allow read, delete: if isManagerOrAdmin();
+    }
+  }
+}
