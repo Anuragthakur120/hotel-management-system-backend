@@ -127,11 +127,22 @@ router.put('/admin/:id', verifyToken, roleCheck(['superadmin']), async (req, res
   }
 });
 
-// SuperAdmin: Delete Admin Account
-router.delete('/admin/:id', verifyToken, roleCheck(['superadmin']), async (req, res) => {
+// SuperAdmin: Update Own Password
+router.put('/update-password', verifyToken, roleCheck(['superadmin']), async (req, res) => {
   try {
-    await User.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Admin account deleted successfully' });
+    const { newPassword } = req.body;
+    if (!newPassword || newPassword.trim().length < 4) {
+      return res.status(400).json({ error: 'New password must be at least 4 characters long' });
+    }
+
+    const user = await User.findById(req.user.userId);
+    if (!user) return res.status(404).json({ error: 'SuperAdmin user account not found' });
+
+    const salt = await bcrypt.genSalt(10);
+    user.passwordHash = await bcrypt.hash(newPassword.trim(), salt);
+    await user.save();
+
+    res.json({ message: 'Password updated successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

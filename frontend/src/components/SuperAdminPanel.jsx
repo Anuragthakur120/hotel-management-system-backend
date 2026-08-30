@@ -14,6 +14,7 @@ import {
   Eye, 
   Lock 
 } from 'lucide-react';
+import api from '../services/api';
 
 export default function SuperAdminPanel({
   rooms,
@@ -36,6 +37,25 @@ export default function SuperAdminPanel({
     fullName: '',
     role: 'Admin'
   });
+
+  // SuperAdmin Password Update State
+  const [newSuperAdminPassword, setNewSuperAdminPassword] = useState('');
+  const [passwordMsg, setPasswordMsg] = useState(null);
+
+  const handleUpdatePassword = async (e) => {
+    e.preventDefault();
+    if (!newSuperAdminPassword || newSuperAdminPassword.trim().length < 4) {
+      setPasswordMsg({ type: 'error', text: 'Password must be at least 4 characters.' });
+      return;
+    }
+    try {
+      const res = await api.put('/auth/update-password', { newPassword: newSuperAdminPassword.trim() });
+      setPasswordMsg({ type: 'success', text: res.data.message || 'Password updated successfully!' });
+      setNewSuperAdminPassword('');
+    } catch (err) {
+      setPasswordMsg({ type: 'error', text: err.response?.data?.error || err.message });
+    }
+  };
 
   const handleCreateAdmin = (e) => {
     e.preventDefault();
@@ -178,6 +198,45 @@ export default function SuperAdminPanel({
               )}
             </div>
           </div>
+
+          {/* Update SuperAdmin Password Section */}
+          <form onSubmit={handleUpdatePassword} className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4 md:col-span-2">
+            <div className="flex items-center space-x-2 border-b border-slate-800 pb-3">
+              <Key className="w-5 h-5 text-amber-600" />
+              <h3 className="text-base font-bold text-slate-900 font-serif">Update SuperAdmin Password</h3>
+            </div>
+
+            {passwordMsg && (
+              <p className={`text-xs p-2.5 rounded-xl border text-center font-medium ${
+                passwordMsg.type === 'success' 
+                  ? 'text-emerald-700 bg-emerald-50 border-emerald-200' 
+                  : 'text-rose-600 bg-rose-50 border-rose-200'
+              }`}>
+                {passwordMsg.text}
+              </p>
+            )}
+
+            <div className="flex flex-col sm:flex-row gap-4 items-end">
+              <div className="flex-1 w-full">
+                <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">New Password</label>
+                <input
+                  type="password"
+                  required
+                  placeholder="Enter new password"
+                  value={newSuperAdminPassword}
+                  onChange={(e) => setNewSuperAdminPassword(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-100 font-mono"
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full sm:w-auto px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs rounded-xl shadow flex items-center justify-center space-x-1.5 transition"
+              >
+                <Lock className="w-4 h-4 text-slate-950" />
+                <span>Save Password</span>
+              </button>
+            </div>
+          </form>
 
         </div>
       )}

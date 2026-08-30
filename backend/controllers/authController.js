@@ -13,14 +13,16 @@ const login = async (req, res) => {
     }
 
     const cleanId = String(identifier).trim();
+    const cleanPassword = String(password).trim();
+    const idRegex = new RegExp(`^${cleanId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i');
 
-    // Query user by mobile, username, email, or name
+    // Query user by mobile, username, email, or name (case-insensitive)
     let user = await User.findOne({
       $or: [
         { mobile: cleanId },
-        { username: cleanId },
-        { email: cleanId },
-        { name: cleanId }
+        { username: idRegex },
+        { email: idRegex },
+        { name: idRegex }
       ]
     });
 
@@ -28,7 +30,7 @@ const login = async (req, res) => {
       return res.status(401).json({ error: 'Invalid username or password' });
     }
 
-    const isMatch = await bcrypt.compare(password, user.passwordHash);
+    const isMatch = await bcrypt.compare(cleanPassword, user.passwordHash);
     if (!isMatch) {
       return res.status(401).json({ error: 'Invalid username or password' });
     }

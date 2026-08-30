@@ -92,12 +92,9 @@ function AppContent() {
     const token = localStorage.getItem('token');
     if (!token) return;
     try {
-      const res = await fetch('http://localhost:5000/api/auth/admins', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const list = await res.json();
-        setAdminAccounts(list.map(a => ({
+      const res = await api.get('/auth/admins');
+      if (res.data) {
+        setAdminAccounts(res.data.map(a => ({
           id: a._id,
           username: a.username || a.name,
           fullName: a.name,

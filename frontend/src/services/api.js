@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api'
+  baseURL: import.meta.env.VITE_SERVER_URL || import.meta.env.SERVER_URL || 'https://hotel-management-system-backend-slt.vercel.app/api'
 });
 
 api.interceptors.request.use(

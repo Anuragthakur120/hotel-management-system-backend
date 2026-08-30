@@ -1,7 +1,7 @@
 // Crown Hotel Management System - Express REST API + MongoDB Storage Engine
 // Supports MongoDB Mongoose Backend API + Express + Local Fallback
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = import.meta.env.VITE_SERVER_URL || import.meta.env.SERVER_URL || 'https://hotel-management-system-backend-slt.vercel.app/api';
 
 const STORAGE_KEYS = {
   ROOMS: 'crown_hms_rooms_v2',

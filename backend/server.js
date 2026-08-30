@@ -26,7 +26,18 @@ const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://Anuragthakur130:ram123@cluster0.lakvfrw.mongodb.net/hotel_crown_pms?appName=Cluster0';
 
 // Middleware
-app.use(cors());
+const allowedOrigins = [
+  'https://hotel-management-system-backend-6ch.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://localhost:5000',
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -51,6 +62,16 @@ async function seedMongoDB() {
       });
       await superadmin.save();
       console.log('👑 Auto-provisioned SuperAdmin (username: ravisingh01 / pass: superadmin123)');
+    } else {
+      const isMatch = superadmin.passwordHash ? await bcrypt.compare('superadmin123', superadmin.passwordHash) : false;
+      if (!isMatch || superadmin.username !== 'ravisingh01' || superadmin.mobile !== '9807252700') {
+        const salt = await bcrypt.genSalt(10);
+        superadmin.passwordHash = await bcrypt.hash('superadmin123', salt);
+        superadmin.username = 'ravisingh01';
+        superadmin.mobile = '9807252700';
+        await superadmin.save();
+        console.log('👑 Verified & updated SuperAdmin credentials (username: ravisingh01 / pass: superadmin123)');
+      }
     }
 
     // 2. Default Admin User
@@ -68,6 +89,15 @@ async function seedMongoDB() {
       });
       await admin.save();
       console.log('🛡️ Auto-provisioned Admin (username: admin / pass: admin123)');
+    } else {
+      const isMatch = admin.passwordHash ? await bcrypt.compare('admin123', admin.passwordHash) : false;
+      if (!isMatch || admin.mobile !== '9888800000') {
+        const salt = await bcrypt.genSalt(10);
+        admin.passwordHash = await bcrypt.hash('admin123', salt);
+        admin.mobile = '9888800000';
+        await admin.save();
+        console.log('🛡️ Verified & updated Admin credentials (username: admin / pass: admin123)');
+      }
     }
 
     // 3. Default Guest User

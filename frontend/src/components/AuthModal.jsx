@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Crown, ArrowRight, X } from 'lucide-react';
+import api from '../services/api';
 
 export default function AuthModal({ onLogin, onClose }) {
   const [activeTab, setActiveTab] = useState('guest-login'); // 'guest-login', 'staff-login', or 'register'
@@ -21,25 +22,19 @@ export default function AuthModal({ onLogin, onClose }) {
           setError('Please enter your full name');
           return;
         }
-        const res = await fetch('http://localhost:5000/api/auth/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, mobile, password })
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Registration failed');
+        const res = await api.post('/auth/register', { name, mobile, password });
         setActiveTab('guest-login');
         setError('Registration successful. Please log in.');
         setPassword('');
       } else {
         const roleStr = activeTab === 'staff-login' ? 'staff' : 'guest';
-        const res = await fetch('http://localhost:5000/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ mobile, password, role: roleStr })
+        const res = await api.post('/auth/login', { 
+          username: mobile.trim(), 
+          mobile: mobile.trim(), 
+          password: password.trim(), 
+          role: roleStr 
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Login failed');
+        const data = res.data;
         
         onLogin({
           ...data.user,
@@ -47,7 +42,8 @@ export default function AuthModal({ onLogin, onClose }) {
         });
       }
     } catch (err) {
-      setError(err.message);
+      const errMsg = err.response?.data?.error || err.message || 'Authentication failed';
+      setError(errMsg);
     }
   };
 
