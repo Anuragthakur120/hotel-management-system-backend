@@ -19,6 +19,7 @@ const Stay = require('./models/Stay');
 const Reservation = require('./models/Reservation');
 
 const path = require('path');
+const { error } = require('console');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -208,6 +209,14 @@ app.use('/api/rooms', roomRoutes);
 app.use('/api/stays', stayRoutes);
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/reports', reportRoutes);
+
+app.get('/', (req,res)=>{
+  res.send({
+    activeStatus: true,
+    error : false,
+
+  })
+})
 
 app.get('/api/health', (req, res) => {
   res.json({
