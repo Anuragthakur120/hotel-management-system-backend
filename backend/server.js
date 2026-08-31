@@ -6,6 +6,8 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
+const connectDB = require('./config/db');
+
 const authRoutes = require('./routes/authRoutes');
 const guestRoutes = require('./routes/guestRoutes');
 const roomRoutes = require('./routes/roomRoutes');
@@ -228,15 +230,30 @@ async function seedMongoDB() {
   }
 }
 
-// Database Connection
-mongoose.connect(MONGO_URI)
-  .then(async () => {
-    console.log(' MongoDB connected 🍃 (Crown HMS Database)');
+// Database Connection & Middleware
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('⚠️ Database connection error:', err.message);
+    return res.status(500).json({ error: 'Database connection failed: ' + err.message });
+  }
+});
+
+let isSeeded = false;
+async function ensureSeeded() {
+  if (isSeeded) return;
+  try {
+    await connectDB();
     await seedMongoDB();
-  })
-  .catch(err => {
-    console.warn('⚠️ MongoDB connection warning (Running standalone API mode):', err.message);
-  });
+    isSeeded = true;
+    console.log('🍃 MongoDB connected & verified (Crown HMS Database)');
+  } catch (err) {
+    console.warn('⚠️ Seeding note:', err.message);
+  }
+}
+ensureSeeded();
 
 // API Routes
 app.use('/api/auth', authRoutes);
