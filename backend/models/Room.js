@@ -15,6 +15,7 @@ const roomSchema = new mongoose.Schema({
   },
   images: [String],
   amenities: [String],
+  description: { type: String, default: '' },
   isActive: { type: Boolean, default: true },
   currentStayId: { type: String, default: null }
 });

@@ -4,6 +4,30 @@ const Room = require('../models/Room');
 const Hotel = require('../models/Hotel');
 const { verifyToken, roleCheck } = require('../middleware/authMiddleware');
 
+const path = require('path');
+const fs = require('fs');
+const multer = require('multer');
+
+// Configure Multer for room photo uploads
+const uploadDir = path.join(__dirname, '../uploads/rooms');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadDir),
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname) || '.jpg';
+    cb(null, `room-${uniqueSuffix}${ext}`);
+  }
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 }
+});
+
 // 1. Get All Rooms
 router.get('/', async (req, res) => {
   try {
@@ -14,10 +38,23 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Multi-Photo Upload Endpoint
+router.post('/upload-photos', verifyToken, roleCheck(['admin', 'superadmin']), upload.array('photos', 10), (req, res) => {
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ error: 'No photo files uploaded' });
+    }
+    const urls = req.files.map(file => `/uploads/rooms/${file.filename}`);
+    res.json({ urls, message: 'Photos uploaded successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // 2. Create New Master Room
 router.post('/', verifyToken, roleCheck(['admin', 'superadmin']), async (req, res) => {
   try {
-    const { roomNumber, floor, category, pricePerNight, price, amenities, images } = req.body;
+    const { roomNumber, floor, category, pricePerNight, price, amenities, images, description } = req.body;
     if (!roomNumber) return res.status(400).json({ error: 'Room number is required' });
 
     const existing = await Room.findOne({ roomNumber: roomNumber.trim() });
@@ -32,7 +69,8 @@ router.post('/', verifyToken, roleCheck(['admin', 'superadmin']), async (req, re
       pricePerNight: roomPrice,
       status: 'vacant',
       amenities: Array.isArray(amenities) ? amenities : (amenities ? String(amenities).split(',').map(s => s.trim()) : []),
-      images: images || [],
+      images: Array.isArray(images) ? images : [],
+      description: description || '',
       isActive: true
     });
     await room.save();
@@ -43,10 +81,10 @@ router.post('/', verifyToken, roleCheck(['admin', 'superadmin']), async (req, re
   }
 });
 
-// 3. Update Room (Price, Status, Category, Amenities, Images)
+// 3. Update Room (Price, Status, Category, Amenities, Images, Description)
 router.put('/:id', verifyToken, roleCheck(['admin', 'superadmin']), async (req, res) => {
   try {
-    const { price, pricePerNight, status, category, amenities, images, currentStayId } = req.body;
+    const { roomNumber, floor, price, pricePerNight, status, category, amenities, images, description, currentStayId } = req.body;
     const room = await Room.findById(req.params.id);
     if (!room) return res.status(404).json({ error: 'Room not found' });
 
@@ -55,16 +93,24 @@ router.put('/:id', verifyToken, roleCheck(['admin', 'superadmin']), async (req, 
       return res.status(409).json({ error: 'Room is already occupied! Double booking prevented.' });
     }
 
+    if (roomNumber) room.roomNumber = roomNumber.trim();
+    if (floor !== undefined) room.floor = Number(floor);
+
     const newPrice = pricePerNight !== undefined ? Number(pricePerNight) : (price !== undefined ? Number(price) : room.price);
     room.price = newPrice;
     room.pricePerNight = newPrice;
 
     if (status) room.status = status;
     if (category) room.category = category;
-    if (amenities) {
-      room.amenities = Array.isArray(amenities) ? amenities : String(amenities).split(',').map(s => s.trim());
+    if (amenities !== undefined) {
+      room.amenities = Array.isArray(amenities) ? amenities : String(amenities).split(',').map(s => s.trim()).filter(Boolean);
     }
-    if (images) room.images = images;
+    if (images !== undefined) {
+      room.images = Array.isArray(images) ? images : [];
+    }
+    if (description !== undefined) {
+      room.description = description;
+    }
     if (currentStayId !== undefined) room.currentStayId = currentStayId;
 
     await room.save();

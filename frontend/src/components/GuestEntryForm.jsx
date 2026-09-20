@@ -581,21 +581,30 @@ export default function GuestEntryForm({
                   {availableRooms.map(r => {
                     const rId = r._id || r.id;
                     const isSelected = (formData.roomId === rId);
+                    const rThumb = (r.images && r.images.length > 0) ? r.images[0] : null;
                     return (
                       <div
                         key={rId}
                         onClick={() => setFormData(prev => ({ ...prev, roomId: rId }))}
-                        className={`p-3.5 rounded-xl border cursor-pointer transition ${
+                        className={`p-3.5 rounded-xl border cursor-pointer transition space-y-2 ${
                           isSelected
                             ? 'bg-amber-500/15 border-amber-500 ring-2 ring-amber-500/30'
                             : 'bg-slate-900 border-slate-800 hover:border-slate-700'
                         }`}
                       >
+                        {rThumb && (
+                          <div className="h-24 w-full rounded-lg overflow-hidden bg-slate-950">
+                            <img src={rThumb} alt="" className="w-full h-full object-cover" />
+                          </div>
+                        )}
                         <div className="flex items-center justify-between">
                           <span className="font-mono text-base font-bold text-white">Room {r.roomNumber || r.number}</span>
-                          <span className="text-xs text-amber-400 font-bold">{config.currencySymbol}{r.pricePerNight}</span>
+                          <span className="text-xs text-amber-400 font-bold">{config.currencySymbol}{r.pricePerNight || r.price}</span>
                         </div>
-                        <p className="text-xs text-slate-400 mt-1">{r.category} (Floor {r.floor})</p>
+                        <p className="text-xs text-slate-400">{r.category} (Floor {r.floor})</p>
+                        {r.description && (
+                          <p className="text-[10px] text-slate-500 line-clamp-1 italic">{r.description}</p>
+                        )}
                       </div>
                     );
                   })}

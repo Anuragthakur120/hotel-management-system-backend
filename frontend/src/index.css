@@ -24,70 +24,95 @@ h1, h2, h3, h4, .font-serif {
   font-family: 'Playfair Display', Georgia, serif;
 }
 
+/* Form Controls & Focus Ring Polish */
+input:focus, select:focus, textarea:focus {
+  outline: none !important;
+  border-color: #c9a24b !important;
+  box-shadow: 0 0 0 2px rgba(201, 162, 75, 0.25) !important;
+  transition: all 0.2s ease-in-out;
+}
+
 /* System-wide Text Contrast Tokens */
 .text-body {
-  color: #0f172a !important; /* High-contrast dark charcoal for light surfaces */
+  color: #0f172a !important;
 }
 
 .text-muted {
-  color: #475569 !important; /* Slate-600 readable secondary text */
+  color: #475569 !important;
 }
 
 .text-subtle {
-  color: #64748b !important; /* Slate-500 clear detail text */
+  color: #64748b !important;
 }
 
 .text-on-dark {
-  color: #ffffff !important; /* Sharp white text for dark/maroon backgrounds */
+  color: #ffffff !important;
 }
 
 .text-brand {
-  color: #800020 !important; /* Crown Maroon */
+  color: #800020 !important;
+}
+
+.text-gold {
+  color: #c9a24b !important;
+}
+
+.border-gold {
+  border-color: rgba(201, 162, 75, 0.4) !important;
 }
 
 .glass-panel {
   background-color: #ffffff;
   border: 1px solid #e2e8f0;
   color: #0f172a;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.glass-panel:hover {
+  box-shadow: 0 12px 20px -5px rgba(128, 0, 32, 0.06), 0 4px 6px -2px rgba(201, 162, 75, 0.08);
+}
 
-/* Custom Maroon & White Glass & Shadow Utilities */
+/* Custom Maroon & Gold Luxury Card Utilities */
 .crown-card {
   background-color: #ffffff;
   border: 1px solid #e5e7eb;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .crown-card:hover {
-  box-shadow: 0 20px 25px -5px rgba(128, 0, 32, 0.08), 0 10px 10px -5px rgba(128, 0, 32, 0.04);
+  box-shadow: 0 20px 25px -5px rgba(128, 0, 32, 0.08), 0 10px 10px -5px rgba(201, 162, 75, 0.06);
+  transform: translateY(-2px);
 }
 
 .crown-btn-primary {
   background-color: #800020;
   color: #ffffff;
   font-weight: 600;
-  transition: all 0.2s ease-in-out;
+  border-radius: 0.75rem;
+  transition: all 0.25s ease-in-out;
 }
 
 .crown-btn-primary:hover {
   background-color: #5c0017;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(128, 0, 32, 0.25);
+  box-shadow: 0 6px 16px rgba(128, 0, 32, 0.25);
 }
 
 .crown-btn-gold {
   background-color: #c9a24b;
   color: #ffffff;
   font-weight: 600;
-  transition: all 0.2s ease-in-out;
+  border-radius: 0.75rem;
+  transition: all 0.25s ease-in-out;
 }
 
 .crown-btn-gold:hover {
   background-color: #b08935;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(201, 162, 75, 0.3);
+  box-shadow: 0 6px 16px rgba(201, 162, 75, 0.35);
 }
 
 /* Custom Scrollbar */

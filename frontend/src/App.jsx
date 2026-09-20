@@ -347,7 +347,7 @@ function AppContent() {
   };
 
   const handleSaveRooms = async (newRooms) => {
-    setRooms(newRooms);
+    await loadAllData();
     showToast('Rooms inventory updated.', 'success');
   };
 

@@ -19,6 +19,67 @@ import {
   Flame 
 } from 'lucide-react';
 
+function RoomCard({ room, rName, rPrice, rDesc, rAmenities, rImages, currencySymbol, onSelectRoomForCheckIn }) {
+  const [activeImgIndex, setActiveImgIndex] = useState(0);
+
+  return (
+    <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 flex flex-col justify-between group">
+      
+      <div className="h-56 overflow-hidden relative bg-slate-900">
+        <img 
+          src={rImages[activeImgIndex] || rImages[0]} 
+          alt={rName} 
+          className="w-full h-full object-cover group-hover:scale-105 transition duration-500" 
+        />
+        <span className="absolute top-3 right-3 px-3 py-1 bg-[#800020] text-[#C9A24B] border border-[#C9A24B]/30 font-bold font-mono text-xs rounded-xl shadow-md">
+          {currencySymbol}{rPrice} / night
+        </span>
+
+        {/* Thumbnail Selector overlay if multiple photos */}
+        {rImages.length > 1 && (
+          <div className="absolute bottom-2 left-2 right-2 flex space-x-1.5 overflow-x-auto p-1 bg-slate-950/60 backdrop-blur rounded-xl border border-white/10">
+            {rImages.map((img, idx) => (
+              <button
+                key={idx}
+                onClick={(e) => { e.stopPropagation(); setActiveImgIndex(idx); }}
+                className={`w-9 h-9 rounded-lg overflow-hidden border-2 transition ${
+                  activeImgIndex === idx ? 'border-[#C9A24B] scale-105' : 'border-transparent opacity-70 hover:opacity-100'
+                }`}
+              >
+                <img src={img} alt="" className="w-full h-full object-cover" />
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
+        <div>
+          <h4 className="text-lg font-bold text-slate-900 font-serif">{rName}</h4>
+          <p className="text-xs text-slate-500 mt-1 leading-relaxed line-clamp-3">{rDesc}</p>
+        </div>
+
+        <div className="flex flex-wrap gap-1.5">
+          {rAmenities.map((am, i) => (
+            <span key={i} className="px-2.5 py-1 bg-slate-100 text-slate-700 text-[10px] font-semibold rounded-lg">
+              {am}
+            </span>
+          ))}
+        </div>
+
+        <button
+          onClick={() => onSelectRoomForCheckIn(room)}
+          className="w-full py-2.5 bg-[#800020] hover:bg-[#5c0017] text-white font-bold text-xs rounded-xl shadow-md shadow-[#800020]/20 transition flex items-center justify-center space-x-1.5"
+        >
+          <Sparkles className="w-4 h-4 text-[#C9A24B]" />
+          <span>Book / Express Check-In</span>
+        </button>
+      </div>
+
+    </div>
+  );
+}
+
 export default function PublicHotelWebsite({
   rooms = [],
   config,
@@ -166,52 +227,32 @@ export default function PublicHotelWebsite({
           <div className="text-center space-y-2">
             <span className="text-xs font-bold text-[#800020] font-mono tracking-widest uppercase">ACCOMMODATIONS</span>
             <h3 className="text-3xl font-bold font-serif text-slate-900">Luxury Rooms & Suites</h3>
-            <p className="text-xs text-slate-500 max-w-md mx-auto">Configured dynamically via SuperAdmin Control Panel</p>
+            <p className="text-xs text-slate-500 max-w-md mx-auto">Explore our available rooms and luxury suites</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {roomTypes.map(rt => (
-              <div 
-                key={rt.id} 
-                className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 flex flex-col justify-between group"
-              >
-                
-                <div className="h-52 overflow-hidden relative">
-                  <img 
-                    src={rt.image} 
-                    alt={rt.name} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-500" 
-                  />
-                  <span className="absolute top-3 right-3 px-3 py-1 bg-[#800020] text-white font-bold font-mono text-xs rounded-xl shadow-md">
-                    {config.currencySymbol}{rt.price} / night
-                  </span>
-                </div>
+            {((rooms && rooms.length > 0) ? rooms : roomTypes).map(room => {
+              const rId = room._id || room.id;
+              const rName = room.category ? `Room ${room.roomNumber || room.number} - ${room.category}` : (room.name || 'Luxury Room');
+              const rPrice = room.pricePerNight || room.price || 2500;
+              const rDesc = room.description || 'Spacious air-conditioned room featuring king bed, LED TV, high-speed WiFi, and 24/7 hot water.';
+              const rAmenities = room.amenities || ['AC', 'LED TV', 'Free WiFi', 'Hot Geyser'];
+              const rImages = (room.images && room.images.length > 0) 
+                ? room.images 
+                : [room.image || 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80'];
 
-                <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-                  <div>
-                    <h4 className="text-lg font-bold text-slate-900 font-serif">{rt.name}</h4>
-                    <p className="text-xs text-slate-500 mt-1 leading-relaxed">{rt.description}</p>
-                  </div>
-
-                  <div className="flex flex-wrap gap-1.5">
-                    {rt.amenities.map((am, i) => (
-                      <span key={i} className="px-2.5 py-1 bg-slate-100 text-slate-700 text-[10px] font-semibold rounded-lg">
-                        {am}
-                      </span>
-                    ))}
-                  </div>
-
-                  <button
-                    onClick={() => onSelectRoomForCheckIn(rt)}
-                    className="w-full py-2.5 bg-[#800020]/10 hover:bg-[#800020] text-[#800020] hover:text-white font-bold text-xs rounded-xl border border-[#800020]/20 transition flex items-center justify-center space-x-1.5"
-                  >
-                    <Sparkles className="w-4 h-4" />
-                    <span>Book / Express Check-In</span>
-                  </button>
-                </div>
-
-              </div>
-            ))}
+              return <RoomCard 
+                key={rId}
+                room={room}
+                rName={rName}
+                rPrice={rPrice}
+                rDesc={rDesc}
+                rAmenities={rAmenities}
+                rImages={rImages}
+                currencySymbol={config.currencySymbol || '₹'}
+                onSelectRoomForCheckIn={onSelectRoomForCheckIn}
+              />;
+            })}
           </div>
         </section>
 

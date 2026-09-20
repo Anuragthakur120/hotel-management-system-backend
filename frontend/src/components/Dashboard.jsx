@@ -238,10 +238,10 @@ export default function Dashboard({
                       {/* ROOM NUMBER HEADING */}
                       <div>
                         <h3 className="text-2xl font-bold font-serif text-slate-900 leading-tight">
-                          Room {room.number}
+                          Room {room.roomNumber || room.number}
                         </h3>
                         <p className="text-xs text-slate-500 font-mono mt-0.5">
-                          Tariff: <strong className="text-[#800020] font-bold">{config.currencySymbol}{room.pricePerNight}</strong> / night
+                          Tariff: <strong className="text-[#800020] font-bold">{config.currencySymbol}{room.pricePerNight || room.price}</strong> / night
                         </p>
                       </div>
 

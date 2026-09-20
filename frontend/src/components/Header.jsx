@@ -102,9 +102,9 @@ export default function Header({
         {userRole && userRole !== 'Guest' && (
           <button
             onClick={onQuickCheckIn}
-            className="px-4 py-2 bg-[#800020] hover:bg-[#5c0017] text-white font-semibold text-xs rounded-xl shadow-md shadow-[#800020]/20 transition flex items-center space-x-1.5"
+            className="px-4 py-2 bg-[#800020] hover:bg-[#5c0017] text-white font-semibold text-xs rounded-xl shadow-md shadow-[#800020]/20 transition transform hover:-translate-y-0.5 flex items-center space-x-1.5"
           >
-            <Plus className="w-4 h-4 stroke-[2.5]" />
+            <Plus className="w-4 h-4 stroke-[2.5] text-[#C9A24B]" />
             <span className="hidden sm:inline">New Check-In</span>
           </button>
         )}

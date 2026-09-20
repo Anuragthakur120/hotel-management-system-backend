@@ -89,8 +89,8 @@ export default function SuperAdminPanel({
             </div>
           </div>
           <div>
-            <h2 className="text-xl font-bold text-black font-serif">SuperAdmin Control Authority</h2>
-            <p className="text-xs text-slate-400">Provision Admin accounts, customize room gallery & access master guest database</p>
+            <h2 className="text-xl font-bold text-slate-900 font-serif">SuperAdmin Control Authority</h2>
+            <p className="text-xs text-slate-500">Provision Admin accounts, customize room gallery & access master guest database</p>
           </div>
         </div>
 
@@ -99,7 +99,7 @@ export default function SuperAdminPanel({
           <button
             onClick={() => setInternalTab('admins')}
             className={`px-3.5 py-1.5 text-xs font-bold rounded-lg transition ${
-              currentTab === 'admins' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-400 hover:text-black'
+              currentTab === 'admins' ? 'bg-[#C9A24B] text-slate-950 shadow' : 'text-slate-400 hover:text-white'
             }`}
           >
             Provision Admin Accounts
@@ -107,7 +107,7 @@ export default function SuperAdminPanel({
           <button
             onClick={() => setInternalTab('guests')}
             className={`px-3.5 py-1.5 text-xs font-bold rounded-lg transition ${
-              currentTab === 'guests' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-400 hover:text-white'
+              currentTab === 'guests' ? 'bg-[#C9A24B] text-slate-950 shadow' : 'text-slate-400 hover:text-white'
             }`}
           >
             All Guest Data ({guestMasters.length})
