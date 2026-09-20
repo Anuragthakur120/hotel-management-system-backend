@@ -1,8 +1,5 @@
 const mongoose = require('mongoose');
 
-// Disable buffering globally so Mongoose queries never sit in buffer timing out
-mongoose.set('bufferCommands', false);
-
 const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb+srv://Anuragthakur130:ram123@cluster0.lakvfrw.mongodb.net/hotel_crown_pms?appName=Cluster0';
 
 let cached = global._mongooseConnection;
@@ -18,9 +15,8 @@ async function connectDB() {
 
   if (!cached.promise) {
     const opts = {
-      bufferCommands: false,
-      serverSelectionTimeoutMS: 10000,
-      connectTimeoutMS: 10000,
+      serverSelectionTimeoutMS: 15000,
+      connectTimeoutMS: 15000,
     };
 
     cached.promise = mongoose.connect(MONGO_URI, opts).then((m) => {

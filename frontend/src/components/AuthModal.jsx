@@ -42,7 +42,14 @@ export default function AuthModal({ onLogin, onClose }) {
         });
       }
     } catch (err) {
-      const errMsg = err.response?.data?.error || err.message || 'Authentication failed';
+      let errMsg = 'Authentication failed';
+      if (err.response?.data?.error) {
+        errMsg = err.response.data.error;
+      } else if (err.message === 'Network Error') {
+        errMsg = 'Unable to reach backend server. Please check internet connection or server status.';
+      } else if (err.message) {
+        errMsg = err.message;
+      }
       setError(errMsg);
     }
   };
