@@ -16,6 +16,7 @@ import {
   UserCheck, 
   Menu, 
   X, 
+  Flame 
 } from 'lucide-react';
 import { getImageUrl } from '../utils/imageUtils';
 
