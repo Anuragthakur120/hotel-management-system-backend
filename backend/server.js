@@ -275,7 +275,12 @@ app.get('/api/health', (req, res) => {
 });
 
 
-app.listen(PORT, () => {
-  console.log(`👑 Crown HMS Server running on http://localhost:${PORT}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`👑 Crown HMS Server running on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
+
 
