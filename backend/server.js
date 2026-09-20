@@ -239,7 +239,6 @@ let isSeeded = false;
 async function ensureSeeded() {
   if (isSeeded) return;
   try {
-    await connectDB();
     await seedMongoDB();
     isSeeded = true;
     console.log('🍃 MongoDB connected & verified (Crown HMS Database)');
@@ -247,7 +246,6 @@ async function ensureSeeded() {
     console.warn('⚠️ Seeding note:', err.message);
   }
 }
-ensureSeeded();
 
 // API Routes
 app.use('/api/auth', authRoutes);
