@@ -19,7 +19,8 @@ import {
   Trash2, 
   Plus, 
   UserPlus, 
-  Check 
+  Check,
+  AlertCircle 
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { getImageUrl } from '../utils/imageUtils';
