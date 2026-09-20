@@ -16,8 +16,8 @@ import {
   UserCheck, 
   Menu, 
   X, 
-  Flame 
 } from 'lucide-react';
+import { getImageUrl } from '../utils/imageUtils';
 
 function RoomCard({ room, rName, rPrice, rDesc, rAmenities, rImages, currencySymbol, onSelectRoomForCheckIn }) {
   const [activeImgIndex, setActiveImgIndex] = useState(0);
@@ -27,7 +27,7 @@ function RoomCard({ room, rName, rPrice, rDesc, rAmenities, rImages, currencySym
       
       <div className="h-56 overflow-hidden relative bg-slate-900">
         <img 
-          src={rImages[activeImgIndex] || rImages[0]} 
+          src={getImageUrl(rImages[activeImgIndex] || rImages[0])} 
           alt={rName} 
           className="w-full h-full object-cover group-hover:scale-105 transition duration-500" 
         />
@@ -46,7 +46,7 @@ function RoomCard({ room, rName, rPrice, rDesc, rAmenities, rImages, currencySym
                   activeImgIndex === idx ? 'border-[#C9A24B] scale-105' : 'border-transparent opacity-70 hover:opacity-100'
                 }`}
               >
-                <img src={img} alt="" className="w-full h-full object-cover" />
+                <img src={getImageUrl(img)} alt="" className="w-full h-full object-cover" />
               </button>
             ))}
           </div>

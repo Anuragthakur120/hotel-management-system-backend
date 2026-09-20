@@ -10,8 +10,8 @@ import {
   Eye, 
   AlertCircle, 
   Trash2, 
-  Check 
 } from 'lucide-react';
+import { getImageUrl } from '../utils/imageUtils';
 
 export default function GuestVerificationQueue({
   pendingSubmissions = [],
@@ -111,7 +111,7 @@ export default function GuestVerificationQueue({
                 <p className="text-slate-600 line-clamp-1">Address: {sub.address || 'N/A'}</p>
                 {sub.idDocUrl && (
                   <div className="pt-1">
-                    <img src={sub.idDocUrl} alt="Submitted ID" className="w-24 h-14 object-cover rounded-xl border border-slate-200 shadow-sm" />
+                    <img src={getImageUrl(sub.idDocUrl)} alt="Submitted ID" className="w-24 h-14 object-cover rounded-xl border border-slate-200 shadow-sm" />
                   </div>
                 )}
               </div>

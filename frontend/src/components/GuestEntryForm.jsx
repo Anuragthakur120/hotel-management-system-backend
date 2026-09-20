@@ -22,6 +22,7 @@ import {
   Check 
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { getImageUrl } from '../utils/imageUtils';
 
 // Client-side image compression helper
 function compressImage(file, maxWidth = 1000, quality = 0.7) {
@@ -535,7 +536,7 @@ export default function GuestEntryForm({
               ) : (
                 idDocuments.map(doc => (
                   <div key={doc.id} className="p-2 bg-slate-900 rounded-xl border border-slate-800 flex items-center justify-between space-x-2 relative group">
-                    <img src={doc.url} alt={doc.name} className="w-10 h-10 object-cover rounded-lg border border-slate-700" />
+                    <img src={getImageUrl(doc.url)} alt={doc.name} className="w-10 h-10 object-cover rounded-lg border border-slate-700" />
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-semibold text-slate-200 truncate">{doc.name}</p>
                       <p className="text-[9px] text-emerald-400 flex items-center space-x-1">
@@ -594,7 +595,7 @@ export default function GuestEntryForm({
                       >
                         {rThumb && (
                           <div className="h-24 w-full rounded-lg overflow-hidden bg-slate-950">
-                            <img src={rThumb} alt="" className="w-full h-full object-cover" />
+                            <img src={getImageUrl(rThumb)} alt="" className="w-full h-full object-cover" />
                           </div>
                         )}
                         <div className="flex items-center justify-between">

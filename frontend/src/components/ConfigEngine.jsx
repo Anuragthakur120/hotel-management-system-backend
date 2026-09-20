@@ -24,6 +24,7 @@ import {
   X
 } from 'lucide-react';
 import api from '../services/api';
+import { getImageUrl } from '../utils/imageUtils';
 
 export default function ConfigEngine({
   rooms,
@@ -343,7 +344,7 @@ export default function ConfigEngine({
                   {rImages.length > 0 && (
                     <div className="h-32 w-full rounded-xl overflow-hidden bg-slate-900 border border-slate-800 relative">
                       <img 
-                        src={rImages[0]} 
+                        src={getImageUrl(rImages[0])} 
                         alt={`Room ${rNumber}`} 
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         onError={(e) => { e.target.style.display = 'none'; }}
@@ -774,7 +775,7 @@ export default function ConfigEngine({
                   <div className="grid grid-cols-4 gap-2 pt-2 max-h-36 overflow-y-auto p-1 bg-slate-900/50 rounded-xl border border-slate-800">
                     {roomForm.images.map((imgUrl, idx) => (
                       <div key={idx} className="relative group/img h-16 rounded-lg overflow-hidden border border-slate-700 bg-slate-950">
-                        <img src={imgUrl} alt={`Preview ${idx + 1}`} className="w-full h-full object-cover" />
+                        <img src={getImageUrl(imgUrl)} alt={`Preview ${idx + 1}`} className="w-full h-full object-cover" />
                         <button
                           type="button"
                           onClick={() => handleRemovePhoto(idx)}
