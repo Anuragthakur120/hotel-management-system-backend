@@ -9,10 +9,14 @@ const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 
-// Ensure uploads directory exists
-const uploadsDir = path.join(__dirname, '..', 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
+// Ensure uploads directory exists safely on local vs serverless
+const uploadsDir = process.env.VERCEL ? '/tmp/uploads' : path.join(__dirname, '..', 'uploads');
+try {
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+} catch (e) {
+  console.warn('Uploads dir setup note:', e.message);
 }
 
 // Multer storage config

@@ -9,9 +9,13 @@ const fs = require('fs');
 const multer = require('multer');
 
 // Configure Multer for room photo uploads
-const uploadDir = path.join(__dirname, '../uploads/rooms');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+const uploadDir = process.env.VERCEL ? '/tmp/uploads/rooms' : path.join(__dirname, '../uploads/rooms');
+try {
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+} catch (e) {
+  console.warn('Room upload dir setup note:', e.message);
 }
 
 const storage = multer.diskStorage({
